@@ -2,7 +2,7 @@ const { doCmd } = require('../lib')
 
 const cmdQuoteEducationMix = async (context) => {
     //Get Info from Contacts,Policy,Product
-    await doCmd({ "cmd": "RepoLifePolicy", "data": { "operation": "GET", "filter": "id=" + context.row.policyId, "include": ["Holder", "Product", "Insureds", "Insureds.Contact", "InsuredObjects"], "noTracking": true } })
+    await doCmd({ 'cmd': 'RepoLifePolicy', 'data': { 'operation': 'GET', 'filter': 'id=' + context.row.policyId, 'include': ['Holder', 'Product', 'Insureds', 'Insureds.Contact', 'InsuredObjects'], 'noTracking': true } })
     const policy = RepoLifePolicy.outData[0];
     const insuredObject = policy.InsuredObjects.filter(x => x.objectDefinitionId == 3)[0];
     const product = JSON.parse(policy.Product.configJson);
@@ -14,7 +14,7 @@ const cmdQuoteEducationMix = async (context) => {
     var technicalRate = product.ProductCharacteristic.technicalRate;
     var v = 1 / (1 + technicalRate);
 
-    await doCmd({ "cmd": "GetFullTable", "data": { "table": table, "filter": "1=1" } });
+    await doCmd({ 'cmd': 'GetFullTable', 'data': { 'table': table, 'filter': '1=1' } });
 
     var qxValues = GetFullTable.outData.map(i => {
         return parseFloat(i[1]);
@@ -28,7 +28,7 @@ const cmdQuoteEducationMix = async (context) => {
         })
     });
 
-    await doCmd({ "cmd": "DoCalcSheet", "data": { "name": "EduMixActuarial", "simulation": true, "jSimulation": JSON.stringify(valuesArray) } });
+    await doCmd({ 'cmd': 'DoCalcSheet', 'data': { 'name': 'EduMixActuarial', 'simulation': true, 'jSimulation': JSON.stringify(valuesArray) } });
     var actuarialValues = [];
 
     DoCalcSheet.outData.map(i => {
@@ -83,7 +83,7 @@ const cmdQuoteEducationMix = async (context) => {
         })
     }
 
-    await doCmd({ "cmd": "DoCalcSheet", "data": { "name": "EducationMixed", "simulation": true, "jSimulation": JSON.stringify(quotingValues) } });
+    await doCmd({ 'cmd': 'DoCalcSheet', 'data': { 'name': 'EducationMixed', 'simulation': true, 'jSimulation': JSON.stringify(quotingValues) } });
 
     var finalResult = DoCalcSheet.outData[1];
 
