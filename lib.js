@@ -2,7 +2,13 @@ const axios = require('axios');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 require('dotenv').config();
-
+/**
+ * Este comando permite efectuar una consulta al canal de sis11
+ * @param { String } cmd Comando a ejecutar
+ * @param { Object } data Argumentos
+ * @returns Object Response
+ * @author Noel Obando
+ */
 const doCmd = async ({ cmd, data }) =>{
     const token = cache.get('Token') || await getToken();
     try {
@@ -10,10 +16,15 @@ const doCmd = async ({ cmd, data }) =>{
         global[cmd] = response.data;
         return response.data
     } catch (error) {
-        global[cmd] = { cmd, outData: null , msg: error }
+        global[cmd] = error.response.data;
     }
 }
-
+/**
+ * Permite el inicio de sesion de un usuario de sis11 con las 
+ * variables configuradas en el entorno (.env)
+ * @returns { String } token de autenticacion
+ * @author Noel Obando
+ */
 const getToken = async()=>{
     try{
         const response = await axios.post(process.env.API_LOGIN,{ email: process.env.API_USER, clave: process.env.API_PASS});
@@ -28,5 +39,6 @@ const getToken = async()=>{
 }
 
 module.exports = { 
-    doCmd
+    doCmd,
+    getToken
 }
