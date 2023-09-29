@@ -9,8 +9,8 @@ require('dotenv').config();
  * @returns Object Response
  * @author Noel Obando
  */
-const doCmd = async ({ cmd, data }) =>{
-    const token = cache.get('Token') || await getToken();
+async function doCmd({ cmd, data }){
+    const token = await getToken();
     try {
         const response = await axios.post(process.env.API_URL, { cmd, data },{ headers: { 'Authorization': `Bearer ${ token }` }});
         global[cmd] = response.data;
@@ -25,9 +25,12 @@ const doCmd = async ({ cmd, data }) =>{
  * @returns { String } token de autenticacion
  * @author Noel Obando
  */
-const getToken = async()=>{
+async function getToken(){
     try{
-        const response = await axios.post(process.env.API_LOGIN,{ email: process.env.API_USER, clave: process.env.API_PASS});
+        if(await cache.get('Token'))
+            return await cache.get('Token');
+
+        const response = await axios.post(process.env.API_LOGIN,{ email: process.env.API_USER, clave: process.env.API_PASS });
         const { ok, msg, outData: { token }} = response.data;
         if(!ok)
             throw msg;
