@@ -30,14 +30,14 @@ async function getToken(){
         if(await cache.get('Token'))
             return await cache.get('Token');
 
-        const response = await axios.post(process.env.API_LOGIN,{ email: process.env.API_USER, clave: process.env.API_PASS });
+        const response = await axios.post(process.env.API_LOGIN,{ email: process.env.USER_EQUITY, clave: process.env.PASS_EQUITY });
         const { ok, msg, outData: { token }} = response.data;
         if(!ok)
             throw msg;
         cache.set('Token', token);
         return token
     }catch(error){
-        throw error
+        throw error.response.data;
     }
 }
 
